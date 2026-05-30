@@ -5,12 +5,11 @@ import isUndefined from '../utils/is-undefined';
 import isNumber from '../utils/is-number';
 import isDate from '../utils/is-date';
 import map from '../utils/map';
-import { createInvalid } from './valid';
+import { createInvalid, isValid } from './valid';
 import { Moment, isMoment } from '../moment/constructor';
 import { getLocale } from '../locale/locales';
 import { hooks } from '../utils/hooks';
 import checkOverflow from './check-overflow';
-import { isValid } from './valid';
 
 import { configFromStringAndArray } from './from-string-and-array';
 import { configFromStringAndFormat } from './from-string-and-format';
@@ -19,7 +18,7 @@ import { configFromArray } from './from-array';
 import { configFromObject } from './from-object';
 
 function createFromConfig(config) {
-    var res = new Moment(checkOverflow(prepareConfig(config)));
+    let res = new Moment(checkOverflow(prepareConfig(config)));
     if (res._nextDay) {
         // Adding is smart enough around DST
         res.add(1, 'd');
@@ -30,7 +29,7 @@ function createFromConfig(config) {
 }
 
 export function prepareConfig(config) {
-    var input = config._i,
+    let input = config._i,
         format = config._f;
 
     config._locale = config._locale || getLocale(config._l);
@@ -63,7 +62,7 @@ export function prepareConfig(config) {
 }
 
 function configFromInput(config) {
-    var input = config._i;
+    let input = config._i;
     if (isUndefined(input)) {
         config._d = new Date(hooks.now());
     } else if (isDate(input)) {
@@ -86,7 +85,7 @@ function configFromInput(config) {
 }
 
 export function createLocalOrUTC(input, format, locale, strict, isUTC) {
-    var c = {};
+    let c = {};
 
     if (format === true || format === false) {
         strict = format;

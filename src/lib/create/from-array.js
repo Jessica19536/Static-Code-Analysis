@@ -82,10 +82,13 @@ export function configFromArray(config) {
 
     // Zero out whatever was not defaulted, including time
     for (; i < 7; i++) {
-        config._a[i] = input[i] =
-            config._a[i] == null ? (i === 2 ? 1 : 0) : config._a[i];
+        if (config._a[i] == null) {
+            let defaultValue = i === 2 ? 1 : 0;
+            config._a[i] = input[i] = defaultValue;
+        } else {
+            input[i] = config._a[i];
+        }
     }
-
     // Check for 24:00:00.000
     if (
         config._a[HOUR] === 24 &&
@@ -97,10 +100,7 @@ export function configFromArray(config) {
         config._a[HOUR] = 0;
     }
 
-    config._d = (config._useUTC ? createUTCDate : createDate).apply(
-        null,
-        input
-    );
+    config._d = config._useUTC ? createUTCDate : createDate(...input);
     expectedWeekday = config._useUTC
         ? config._d.getUTCDay()
         : config._d.getDay();
@@ -116,11 +116,7 @@ export function configFromArray(config) {
     }
 
     // check for mismatching day of week
-    if (
-        config._w &&
-        typeof config._w.d !== 'undefined' &&
-        config._w.d !== expectedWeekday
-    ) {
+    if (config._w?.d !== undefined && config._w.d !== expectedWeekday) {
         getParsingFlags(config).weekdayMismatch = true;
     }
 }
@@ -164,15 +160,15 @@ function dayOfYearFromWeekInfo(config) {
             if (weekday < 0 || weekday > 6) {
                 weekdayOverflow = true;
             }
-        } else if (w.e != null) {
+        } else if (w.e == null) {
+            // default to beginning of week
+            weekday = dow;
+        } else {
             // local weekday -- counting starts from beginning of week
             weekday = w.e + dow;
             if (w.e < 0 || w.e > 6) {
                 weekdayOverflow = true;
             }
-        } else {
-            // default to beginning of week
-            weekday = dow;
         }
     }
     if (week < 1 || week > weeksInYear(weekYear, dow, doy)) {

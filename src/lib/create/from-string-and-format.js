@@ -52,7 +52,7 @@ export function configFromStringAndFormat(config) {
         parsedInput = (string.match(getParseRegexForToken(token, config)) ||
             [])[0];
         if (parsedInput) {
-            skipped = string.substr(0, string.indexOf(parsedInput));
+            skipped = string.substring(0, string.indexOf(parsedInput));
             if (skipped.length > 0) {
                 getParsingFlags(config).unusedInput.push(skipped);
             }
